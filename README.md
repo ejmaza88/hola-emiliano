@@ -19,7 +19,9 @@ This is a sandbox project to practice local development using containers and Doc
 ````
 
 Using another shell, `cd` into the repo and run:
-- `make npm-watch`
+````bash
+    make npm-watch
+````
 
 
 #### To view the app:
