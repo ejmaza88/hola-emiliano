@@ -1,0 +1,17 @@
+.DS_Store
+.idea
+.pyc
+
+data/db-data
+data/redis-data
+
+venv
+.venv
+
+__pycache__
+node_modules/
+
+manifest.dev.json
+
+rogue/rogue/local_settings.py
+rogue/.env

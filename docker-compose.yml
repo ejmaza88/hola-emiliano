@@ -1,0 +1,104 @@
+version: "3.9"
+
+x-service: &default-django
+    build:
+      context: .
+    image: maza88/django-app
+    env_file:
+      - .django_env
+    environment:
+      DB_HOST: db
+      DB_NAME: rogue
+      DB_USER: root
+      DB_PASSWORD: phantom
+      DJANGO_SU_NAME: admin
+      DJANGO_SU_EMAIL: admin@mail.com
+      DJANGO_SU_PASSWORD: secret
+    restart: "no"
+    working_dir: /rogue
+    volumes:
+      - ./rogue:/rogue
+    networks:
+      - db_net
+    depends_on:
+      db:
+        condition: service_healthy
+
+x-service: &default-node
+    image: node:14.19.1-alpine3.14
+    working_dir: /rogue
+    volumes:
+      - ./rogue:/rogue
+
+services:
+  django-server:
+    <<: *default-django
+    build:
+      context: ./
+      target: django-server
+    entrypoint: django-admin runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
+
+  django-shell:
+    <<: *default-django
+    command: django-admin shell
+
+  migrate:
+    <<: *default-django
+    command: python manage.py migrate
+
+  redis:
+    image: redis:6.2.7-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./data/redis-config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./data/redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - redis_net
+
+  db:
+    image: postgres:14.2-alpine3.15
+    environment:
+      POSTGRES_DB: rogue
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: phantom
+    volumes:
+      - ./data/db-data:/var/lib/postgresql
+    ports:
+      - "5431:5432"
+    networks:
+      - db_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  npm-watch:
+    <<: *default-node
+    command: npm run watch
+    ports:
+      - "7654:7654"
+    depends_on:
+      npm-install:
+        condition: service_completed_successfully
+
+  npm-install:
+    <<: *default-node
+    command: npm install
+
+networks:
+  redis_net:
+  db_net:
+
+volumes:
+  redis-data:
+  db-data:
