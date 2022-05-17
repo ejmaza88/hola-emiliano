@@ -1,7 +1,11 @@
-import React, { useEffect , useRef} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import FadeIn from 'react-fade-in';
-import { MDBBtn, MDBCol, MDBRow } from 'mdb-react-ui-kit';
+import {MDBCol, MDBRow} from 'mdb-react-ui-kit';
+
+import {Header} from "./header";
+import {Postgres} from "./pg";
+import {Redis} from "./redis";
 
 
 import '../css/home.css'
@@ -9,24 +13,16 @@ import '../css/home.css'
 
 function App(props) {
 
-  const handleClick = () => {
-    console.log(props)
-  }
 
   return (
     <>
       <FadeIn>
+        <Header/>
+
         <MDBRow>
+          <Postgres {...props} />
 
-          <MDBCol sm={12} md={2} lg={2}>
-            Hola Emiliano!
-            Message: {props.message}
-          </MDBCol>
-
-          <MDBCol sm={12} md={10} lg={10}>
-            <MDBBtn rounded size='sm' onClick={handleClick} color='light'>Button</MDBBtn>
-          </MDBCol>
-
+          {/*<Redis {...props} />*/}
         </MDBRow>
       </FadeIn>
     </>
