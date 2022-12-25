@@ -28,6 +28,16 @@ x-service: &default-node
       - ./rogue:/rogue
 
 services:
+  pycharm:
+    <<: *default-django
+    entrypoint: [ ]
+    command: [ ]
+    networks:
+      - db_net
+    depends_on:
+      db:
+        condition: service_started
+
   django-server:
     <<: *default-django
     build:

@@ -8,11 +8,8 @@ This is a sandbox project to practice local development using containers and Doc
 - If running on a M1 mac:
   - `export DOCKER_DEFAULT_PLATFORM=linux/amd64`
 
-`cd` into the repo and run the following:
+`cd` into repo and run the following:
 
-````bash
-cd rogue && echo 'PUBLIC_HOST="localhost"' > .env && cd ..
-````
 ````bash
 make django-local-settings
 ````
